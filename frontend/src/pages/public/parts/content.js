@@ -35,7 +35,7 @@ export const serviceIcon = (s) => (s?.icon && ICON_NAMES.has(s.icon) ? s.icon : 
 export const HOME_FALLBACK = {
   hero: {
     headline: 'Grow your wealth with the right mutual funds',
-    subline: 'Aureus Finserve helps families invest in mutual funds with clarity — from a first SIP to planning for retirement — with a dedicated relationship manager and one secure dashboard.',
+    subline: 'Aureus Finserve helps you invest in mutual funds with clarity — from a first SIP to planning for retirement — with a dedicated relationship manager and one secure dashboard.',
     primaryCtaLabel: 'Book a free consultation',
     secondaryCtaLabel: 'Calculate your SIP',
   },

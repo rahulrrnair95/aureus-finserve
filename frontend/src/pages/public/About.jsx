@@ -227,7 +227,7 @@ export default function About() {
 
   return (
     <>
-      <PageHead eyebrow="About us" title="A family office sensibility, for every family" lead="Aureus Finserve is an AMFI-registered mutual fund distributor helping families invest with clarity, discipline and a long-term view." />
+      <PageHead eyebrow="About us" title="Clear, patient service for every investor" lead="Aureus Finserve is an AMFI-registered mutual fund distributor helping individuals and families invest with clarity, discipline and a long-term view." />
 
       {q.loading && !a ? (
         <section className="section">

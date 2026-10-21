@@ -282,7 +282,7 @@ Exit loads may apply to units redeemed within the exit-load period. Returns are 
     /** The firm's team. Years are shown on the site as "10+ years"; add the founder's EUIN in Content > Team. */
     private void team() {
         member(1, "Rahul Rajesh", "Founder", "E714199", true, 10, "NISM Series V-A certified; Graduate",
-                "Rahul founded Aureus Finserve to help families invest in mutual funds with clear explanations and dependable service. He is NISM Series V-A certified and has more than 10 years of experience.");
+                "Rahul founded Aureus Finserve to help individuals and families invest in mutual funds with clear explanations and dependable service. He is NISM Series V-A certified and has more than 10 years of experience.");
     }
 
     private void banner() {
@@ -384,7 +384,7 @@ If your complaint is not resolved to your satisfaction, you may lodge it on SEBI
         }
         content.put(SiteService.HOME, new HomeContent(
                 new Hero("Grow your wealth with the right mutual funds",
-                        "An AMFI-registered mutual fund distributor helping families invest with clarity, discipline and personal service.",
+                        "An AMFI-registered mutual fund distributor helping you invest with clarity, discipline and personal service.",
                         "Book a free consultation", "Calculate your SIP"),
                 List.of(new TitleText("AMFI-registered", "We are an AMFI-registered mutual fund distributor (ARN-372611) and follow the AMFI code of conduct."),
                         new TitleText("Dedicated relationship manager", "A named relationship manager who knows your family's goals and is a call or message away."),
@@ -398,9 +398,9 @@ If your complaint is not resolved to your satisfaction, you may lodge it on SEBI
 
     private void about() {
         content.put(SiteService.ABOUT, new AboutContent(
-                "Aureus Finserve began with a simple belief: every family deserves patient, honest help with its investments. Our founder spent years watching investors buy and sell at the wrong time, often because nobody explained what they owned. We set out to build a practice where clients understand every scheme they invest in, see all their family's investments in one place and can reach a real person when they need one.\n\nToday we serve individuals and families across India, from first-time SIP investors to retirees drawing a monthly income, with the same focus on clarity and service.",
-                "To help families build long-term wealth through mutual funds by explaining options clearly, executing transactions efficiently and supporting them at every stage of life.",
-                "To be the most trusted mutual fund distributor for Indian families - known for transparency, discipline and service rather than product pushing.",
+                "Aureus Finserve began with a simple belief: every investor deserves patient, honest help with their investments. Our founder spent years watching investors buy and sell at the wrong time, often because nobody explained what they owned. We set out to build a practice where clients understand every scheme they invest in, see all their family's investments in one place and can reach a real person when they need one.\n\nToday we serve individuals and families across India, from first-time SIP investors to retirees drawing a monthly income, with the same focus on clarity and service.",
+                "To help investors build long-term wealth through mutual funds by explaining options clearly, executing transactions efficiently and supporting them at every stage of life.",
+                "To be the most trusted mutual fund distributor for Indian investors - known for transparency, discipline and service rather than product pushing.",
                 List.of(new TitleText("Client first", "Every recommendation of a scheme category starts with your goals, time horizon and risk profile, not with our commission."),
                         new TitleText("Transparency", "We disclose our commission, explain costs and risks plainly and never promise returns."),
                         new TitleText("Long-term investing", "We encourage disciplined, goal-based investing and help you stay the course through market cycles.")),

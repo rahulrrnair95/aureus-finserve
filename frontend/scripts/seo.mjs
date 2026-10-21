@@ -87,7 +87,7 @@ function pages(dir) {
         { '@context': 'https://schema.org', '@type': 'WebSite', '@id': `${ORIGIN}/#website`, name: SITE, alternateName: 'Aureus Finserve Mutual Funds', url: `${ORIGIN}/` },
       ],
     },
-    { path: '/about', title: 'About us', description: `Meet ${SITE}${founder ? `, founded by ${founder}` : ''}: an AMFI-registered mutual fund distributor${arn} in ${CITY} helping families invest with clarity and discipline.` },
+    { path: '/about', title: 'About us', description: `Meet ${SITE}${founder ? `, founded by ${founder}` : ''}: an AMFI-registered mutual fund distributor${arn} in ${CITY} helping individuals and families invest with clarity and discipline.` },
     { path: '/services', title: 'Services', description: `Mutual fund services from ${SITE}: SIP, lump sum, tax saving (ELSS), retirement, child education, regular income (SWP), NRI investments and portfolio review.` },
     { path: '/amc-partners', title: 'AMC partners', description: `Fund houses whose regular plan schemes ${SITE} distributes, with the number of schemes from each AMC.` },
     { path: '/funds', title: 'Fund explorer', description: 'Explore mutual fund schemes with latest NAVs, 1/3/5/10-year returns, risk-o-meter and expense ratios from AMFI data. Filter by AMC, category and risk.' },

@@ -222,7 +222,7 @@ function WhyBand({ items }) {
   return (
     <section className="section section--cream" aria-labelledby="why-title">
       <div className="container">
-        <SectionHeading center eyebrow="Why Aureus" title={<span id="why-title">Why families choose us</span>} />
+        <SectionHeading center eyebrow="Why Aureus" title={<span id="why-title">Why investors choose us</span>} />
         <ul className="pub-why">
           {items.map((w, i) => (
             <li key={w.title} className="pub-why__item">
@@ -374,7 +374,7 @@ function Testimonials() {
   return (
     <section className="section section--cream" aria-labelledby="tst-title">
       <div className="container">
-        <SectionHeading center eyebrow="In their words" title={<span id="tst-title">Trusted by families</span>} />
+        <SectionHeading center eyebrow="In their words" title={<span id="tst-title">Trusted by our clients</span>} />
         {body}
         <p className="tiny muted center" style={{ marginTop: '1.5rem' }}>
           Testimonials reflect individual service experiences and are not indicative of investment performance.
