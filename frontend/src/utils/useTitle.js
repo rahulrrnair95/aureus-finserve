@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 
 export function useTitle(title) {
   useEffect(() => {
-    document.title = title ? `${title} | Aureus Finserve` : 'Aureus Finserve — Wealth Beyond Today';
+    // keep in step with scripts/seo.mjs (fullTitle), which writes the same titles into the static HTML
+    document.title = title ? `${title} | Aureus Finserve` : 'Aureus Finserve | Mutual Fund Distributor in Thiruvananthapuram';
   }, [title]);
 }
 

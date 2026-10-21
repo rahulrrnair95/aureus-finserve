@@ -33,8 +33,12 @@ function staticDataPlugin() {
         fs.createReadStream(file).pipe(res);
       });
     },
-    writeBundle() {
+    async writeBundle() {
       fs.cpSync(STATIC_DATA_DIR, path.join(outDir, 'static-api'), { recursive: true });
+      // per-page titles / descriptions / structured data, sitemap.xml and robots.txt (see scripts/seo.mjs)
+      const { writeSeo } = await import('./scripts/seo.mjs');
+      const r = writeSeo(outDir, STATIC_DATA_DIR);
+      this.info?.(`SEO: ${r.pages} pages, ${r.sitemap} sitemap URLs`);
     },
   };
 }

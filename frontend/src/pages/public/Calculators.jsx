@@ -35,7 +35,7 @@ export default function Calculators() {
   const { kind } = useParams();
   const navigate = useNavigate();
   const calc = kind ? calculatorById(kind) : null;
-  useTitle(calc ? calc.title : 'Calculators');
+  useTitle(calc ? calc.title : 'Mutual fund calculators');
 
   if (kind && !calc) {
     return <NotFoundBlock title="Calculator not found" message="That calculator doesn’t exist. Choose one of our eight planning calculators." backTo="/calculators" backLabel="All calculators" />;
