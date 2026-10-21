@@ -384,6 +384,15 @@
     border-left: 1px solid var(--line-soft);
   }
 }
+/* the result column can be narrow: let the main button take the full width (and wrap) instead of overflowing the card */
+.pub-mini__result .btn {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
+.pub-mini__result .row > .btn:first-child {
+  flex: 1 1 100%;
+}
 .pub-mini__value {
   font-family: var(--font-display);
   font-size: 2rem;
