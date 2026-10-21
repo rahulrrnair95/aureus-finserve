@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Button from '../../components/Button';
 import Icon from '../../components/Icon';
-import { Accordion, ExtLink, SectionHeading } from '../../components/Misc';
+import { ExtLink, SectionHeading } from '../../components/Misc';
 import { ErrorState } from '../../components/States';
 import { Skeleton, SkeletonCards } from '../../components/Skeleton';
 import { publicApi } from '../../api/endpoints';
@@ -16,7 +16,6 @@ import MiniSip from './parts/MiniSip';
 import { NFO_DISCLAIMER, NfoCard } from './parts/Nfo';
 import { brand } from '../../brand';
 import { STATIC_SITE } from '../../utils/siteMode';
-import { LOCAL_FAQS } from '../../seoContent';
 
 const isNum = (v) => v !== null && v !== undefined && v !== '' && !Number.isNaN(Number(v));
 
@@ -334,33 +333,6 @@ function NfoBand() {
   );
 }
 
-/** Local search band: who we are and where, with links to the main services and the local FAQs (also in the page's structured data). */
-function LocalBand() {
-  return (
-    <section className="section section--cream" aria-labelledby="local-title">
-      <div className="container pub-narrow">
-        <span className="eyebrow">Thiruvananthapuram, Kerala</span>
-        <h2 id="local-title">Mutual fund and SIP investment in Trivandrum</h2>
-        <span className="gold-rule gold-rule--dark" aria-hidden="true" />
-        <p>
-          Aureus Finserve is an AMFI-registered mutual fund distributor (ARN-372611) based at Pangode, Thirumala in Thiruvananthapuram. We help
-          families and professionals across Trivandrum and Kerala, and NRIs abroad, <Link to="/services/sip">start a SIP</Link>,{' '}
-          <Link to="/services/lump-sum">invest a lump sum</Link>, <Link to="/services/tax-saving-elss">save tax with ELSS funds</Link>,{' '}
-          <Link to="/services/retirement">plan for retirement</Link> and <Link to="/services/child-education">their children’s education</Link>, in
-          regular plans of{' '}
-          <Link to="/amc-partners">leading mutual fund houses</Link>.
-        </p>
-        <p>
-          Compare schemes in our <Link to="/funds">fund explorer</Link>, try the <Link to="/calculators/sip">SIP calculator</Link>, or{' '}
-          <Link to="/contact">book a free consultation</Link> at our office or over a call.
-        </p>
-        <h3 style={{ marginTop: '2rem' }}>Common questions</h3>
-        <Accordion items={LOCAL_FAQS.map((f, i) => ({ id: i, title: f.question, content: <p>{f.answer}</p> }))} />
-      </div>
-    </section>
-  );
-}
-
 function Testimonials() {
   const q = useApi(() => publicApi.testimonials(), []);
   let body;
@@ -474,7 +446,6 @@ export default function Home() {
       <NfoBand />
       {sec.testimonials && <Testimonials />}
       {sec.articles && <LatestArticles />}
-      <LocalBand />
     </>
   );
 }

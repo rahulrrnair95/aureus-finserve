@@ -4,7 +4,7 @@
 // Called from vite.config.js after the static bundle is written; reads the snapshot in static-data/.
 import fs from 'fs';
 import path from 'path';
-import { LOCAL_FAQS, seoTitle } from '../src/seoContent.js';
+import { seoTitle } from '../src/seoContent.js';
 
 const ORIGIN = 'https://aureusfinserve.com';
 const SITE = 'Aureus Finserve';
@@ -82,13 +82,9 @@ function pages(dir) {
       title: null,
       heading: readJson(dir, 'home.json', {}).hero?.headline || 'Grow your wealth with the right mutual funds',
       description: `${SITE} is an AMFI-registered mutual fund distributor${arn} in ${CITY}. Start a SIP, invest a lump sum, save tax with ELSS and plan retirement with personal service.`,
-      html:
-        `<h2>Mutual fund and SIP investment in Trivandrum</h2><p>${SITE} is an AMFI-registered mutual fund distributor${esc(arn)} based at Pangode, Thirumala in Thiruvananthapuram, helping families across Trivandrum, Kerala and NRIs abroad start a SIP, invest a lump sum, save tax with ELSS funds and plan for retirement and children’s education.</p>` +
-        faqHtml(LOCAL_FAQS),
       ld: [
         biz,
         { '@context': 'https://schema.org', '@type': 'WebSite', '@id': `${ORIGIN}/#website`, name: SITE, alternateName: 'Aureus Finserve Mutual Funds', url: `${ORIGIN}/` },
-        faqLd(LOCAL_FAQS),
       ],
     },
     { path: '/about', title: 'About us', description: `Meet ${SITE}${founder ? `, founded by ${founder}` : ''}: an AMFI-registered mutual fund distributor${arn} in ${CITY} helping families invest with clarity and discipline.` },
