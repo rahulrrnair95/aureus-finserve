@@ -26,11 +26,6 @@ export default function AmcPartners() {
                 {amcs.map((a) => (
                   <li key={a.id} className="pub-amc-cell">
                     <AmcTile amc={a} showCount showName />
-                    {a.website && (
-                      <a className="pub-amc-site small" href={a.website} target="_blank" rel="noopener noreferrer">
-                        {a.website.replace(/^https?:\/\/(www\.)?/, '')} ↗<span className="sr-only"> ({a.name} website, opens in new tab)</span>
-                      </a>
-                    )}
                   </li>
                 ))}
               </ul>
