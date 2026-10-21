@@ -237,7 +237,50 @@ function safeList(dir) {
   }
 }
 
-function render(template, p) {
+// Which page component a URL renders and the snapshot files it reads first, so each HTML file can ask the browser to
+// fetch them alongside the main script instead of one after another (page code, then data).
+const PAGE_SRC = [
+  [/^\/$/, 'Home'],
+  [/^\/about$/, 'About'],
+  [/^\/services$/, 'Services'],
+  [/^\/services\//, 'ServiceDetail'],
+  [/^\/amc-partners$/, 'AmcPartners'],
+  [/^\/funds$/, 'FundExplorer'],
+  [/^\/funds\//, 'SchemeDetail'],
+  [/^\/nfo$/, 'Nfos'],
+  [/^\/nfo\//, 'NfoDetail'],
+  [/^\/calculators/, 'Calculators'],
+  [/^\/learn$/, 'Knowledge'],
+  [/^\/learn\/articles\//, 'Article'],
+  [/^\/contact$/, 'Contact'],
+  [/^\/legal\//, 'LegalPage'],
+];
+const PAGE_DATA = {
+  '/': ['home.json', 'banners.json', 'services.json', 'amcs.json', 'nfos.json', 'testimonials.json', 'articles.json'],
+  '/about': ['about.json', 'team.json'],
+};
+
+function preloads(p, chunks, entryFiles) {
+  const name = PAGE_SRC.find(([re]) => re.test(p.path))?.[1];
+  const files = new Set();
+  const add = (key) => {
+    const c = chunks[key];
+    if (!c || files.has(c.file)) return;
+    files.add(c.file);
+    c.imports.forEach((f) => {
+      const k = Object.keys(chunks).find((x) => chunks[x].file === f);
+      if (k) add(k);
+      else files.add(f);
+    });
+  };
+  if (name) add(`src/pages/public/${name}.jsx`);
+  return [
+    ...[...files].filter((f) => !entryFiles.has(f)).map((f) => `<link rel="modulepreload" crossorigin href="/${f}" />`),
+    ...['site.json', ...(PAGE_DATA[p.path] || [])].map((f) => `<link rel="preload" as="fetch" crossorigin href="/static-api/${f}" />`),
+  ];
+}
+
+function render(template, p, chunks = {}) {
   const url = p.path === '/' ? `${ORIGIN}/` : `${ORIGIN}${p.path}`;
   const title = seoTitle(p.path, p.title);
   const desc = clip(p.description);
@@ -247,7 +290,10 @@ function render(template, p) {
   const body =
     `<div class="seo-pre"><nav aria-label="Site">${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join(' · ')}</nav>` +
     `<h1>${esc(heading)}</h1><p>${esc(p.description)}</p>${p.html || ''}</div>`;
+  // files the template already loads (entry script and its modulepreloads)
+  const entryFiles = new Set([...template.matchAll(/(?:src|href)="\/(assets\/[^"]+\.js)"/g)].map((m) => m[1]));
   const head = [
+    ...preloads(p, chunks, entryFiles),
     `<link rel="canonical" href="${url}" />`,
     `<meta property="og:site_name" content="${SITE}" />`,
     `<meta property="og:type" content="${p.type || 'website'}" />`,
@@ -269,7 +315,7 @@ function render(template, p) {
     .replace('<div id="root"></div>', `<div id="root">${body}</div>`);
 }
 
-export function writeSeo(outDir, dataDir) {
+export function writeSeo(outDir, dataDir, chunks = {}) {
   const template = fs.readFileSync(path.join(outDir, 'index.html'), 'utf8');
   const meta = readJson(dataDir, 'meta.json', {});
   const today = (meta.generatedAt || new Date().toISOString()).slice(0, 10);
@@ -277,7 +323,7 @@ export function writeSeo(outDir, dataDir) {
   for (const p of list) {
     const file = p.path === '/' ? 'index.html' : `${p.path.slice(1)}.html`;
     fs.mkdirSync(path.dirname(path.join(outDir, file)), { recursive: true });
-    fs.writeFileSync(path.join(outDir, file), render(template, p));
+    fs.writeFileSync(path.join(outDir, file), render(template, p, chunks));
   }
   const urls = list
     .filter((p) => !p.noSitemap)

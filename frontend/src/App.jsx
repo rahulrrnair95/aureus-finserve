@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import { SiteProvider } from './auth/SiteContext';
@@ -7,75 +7,82 @@ import { ToastProvider } from './components/Toast';
 import { PageLoader } from './components/Skeleton';
 import PublicLayout from './layouts/PublicLayout';
 import { STATIC_SITE } from './utils/siteMode';
+import { lazyPage, preloadPages } from './utils/lazyPage';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Public
-const Home = lazy(() => import('./pages/public/Home'));
-const About = lazy(() => import('./pages/public/About'));
-const Services = lazy(() => import('./pages/public/Services'));
-const ServiceDetail = lazy(() => import('./pages/public/ServiceDetail'));
-const AmcPartners = lazy(() => import('./pages/public/AmcPartners'));
-const FundExplorer = lazy(() => import('./pages/public/FundExplorer'));
-const SchemeDetail = lazy(() => import('./pages/public/SchemeDetail'));
-const Nfos = lazy(() => import('./pages/public/Nfos'));
-const NfoDetail = lazy(() => import('./pages/public/NfoDetail'));
-const Calculators = lazy(() => import('./pages/public/Calculators'));
-const Knowledge = lazy(() => import('./pages/public/Knowledge'));
-const Article = lazy(() => import('./pages/public/Article'));
-const Contact = lazy(() => import('./pages/public/Contact'));
+const Home = lazyPage(() => import('./pages/public/Home'));
+const About = lazyPage(() => import('./pages/public/About'));
+const Services = lazyPage(() => import('./pages/public/Services'));
+const ServiceDetail = lazyPage(() => import('./pages/public/ServiceDetail'));
+const AmcPartners = lazyPage(() => import('./pages/public/AmcPartners'));
+const FundExplorer = lazyPage(() => import('./pages/public/FundExplorer'));
+const SchemeDetail = lazyPage(() => import('./pages/public/SchemeDetail'));
+const Nfos = lazyPage(() => import('./pages/public/Nfos'));
+const NfoDetail = lazyPage(() => import('./pages/public/NfoDetail'));
+const Calculators = lazyPage(() => import('./pages/public/Calculators'));
+const Knowledge = lazyPage(() => import('./pages/public/Knowledge'));
+const Article = lazyPage(() => import('./pages/public/Article'));
+const Contact = lazyPage(() => import('./pages/public/Contact'));
 // Grievance redressal page removed from the site for now (file kept: pages/public/Grievance.jsx)
-// const Grievance = lazy(() => import('./pages/public/Grievance'));
-const LegalPage = lazy(() => import('./pages/public/LegalPage'));
-const NotFound = lazy(() => import('./pages/public/NotFound'));
+// const Grievance = lazyPage(() => import('./pages/public/Grievance'));
+const LegalPage = lazyPage(() => import('./pages/public/LegalPage'));
+const NotFound = lazyPage(() => import('./pages/public/NotFound'));
 
 // Dynamic parts (backend + database): not registered in the static build (src/utils/siteMode.js). The `STATIC_SITE ? null :`
 // guards are constant-folded at build time, so these chunks are not emitted into dist-static at all.
-const Kyc = STATIC_SITE ? null : lazy(() => import('./pages/public/Kyc'));
-const KycStatus = STATIC_SITE ? null : lazy(() => import('./pages/public/KycStatus'));
+const Kyc = STATIC_SITE ? null : lazyPage(() => import('./pages/public/Kyc'));
+const KycStatus = STATIC_SITE ? null : lazyPage(() => import('./pages/public/KycStatus'));
 
 // Auth
-const Login = STATIC_SITE ? null : lazy(() => import('./pages/auth/Login'));
-const ForgotPassword = STATIC_SITE ? null : lazy(() => import('./pages/auth/ForgotPassword'));
-const Activate = STATIC_SITE ? null : lazy(() => import('./pages/auth/Activate'));
+const Login = STATIC_SITE ? null : lazyPage(() => import('./pages/auth/Login'));
+const ForgotPassword = STATIC_SITE ? null : lazyPage(() => import('./pages/auth/ForgotPassword'));
+const Activate = STATIC_SITE ? null : lazyPage(() => import('./pages/auth/Activate'));
 
 // Investor
-const InvestorLayout = STATIC_SITE ? null : lazy(() => import('./layouts/InvestorLayout'));
-const Overview = STATIC_SITE ? null : lazy(() => import('./pages/investor/Overview'));
-const Holdings = STATIC_SITE ? null : lazy(() => import('./pages/investor/Holdings'));
-const Sips = STATIC_SITE ? null : lazy(() => import('./pages/investor/Sips'));
-const Transact = STATIC_SITE ? null : lazy(() => import('./pages/investor/Transact'));
-const Orders = STATIC_SITE ? null : lazy(() => import('./pages/investor/Orders'));
-const Reports = STATIC_SITE ? null : lazy(() => import('./pages/investor/Reports'));
-const Goals = STATIC_SITE ? null : lazy(() => import('./pages/investor/Goals'));
-const Profile = STATIC_SITE ? null : lazy(() => import('./pages/investor/Profile'));
-const ServiceRequests = STATIC_SITE ? null : lazy(() => import('./pages/investor/ServiceRequests'));
-const Notifications = STATIC_SITE ? null : lazy(() => import('./pages/investor/Notifications'));
-const ContactRm = STATIC_SITE ? null : lazy(() => import('./pages/investor/ContactRm'));
-const InvestorSettings = STATIC_SITE ? null : lazy(() => import('./pages/investor/Settings'));
+const InvestorLayout = STATIC_SITE ? null : lazyPage(() => import('./layouts/InvestorLayout'));
+const Overview = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Overview'));
+const Holdings = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Holdings'));
+const Sips = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Sips'));
+const Transact = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Transact'));
+const Orders = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Orders'));
+const Reports = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Reports'));
+const Goals = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Goals'));
+const Profile = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Profile'));
+const ServiceRequests = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/ServiceRequests'));
+const Notifications = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Notifications'));
+const ContactRm = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/ContactRm'));
+const InvestorSettings = STATIC_SITE ? null : lazyPage(() => import('./pages/investor/Settings'));
 
 // Console
-const ConsoleLayout = STATIC_SITE ? null : lazy(() => import('./layouts/ConsoleLayout'));
-const Dashboard = STATIC_SITE ? null : lazy(() => import('./pages/console/Dashboard'));
-const Clients = STATIC_SITE ? null : lazy(() => import('./pages/console/Clients'));
-const ClientDetail = STATIC_SITE ? null : lazy(() => import('./pages/console/ClientDetail'));
-const Leads = STATIC_SITE ? null : lazy(() => import('./pages/console/Leads'));
-const KycRequests = STATIC_SITE ? null : lazy(() => import('./pages/console/Kyc'));
-const OrderDesk = STATIC_SITE ? null : lazy(() => import('./pages/console/OrderDesk'));
-const Tickets = STATIC_SITE ? null : lazy(() => import('./pages/console/Tickets'));
-const Brokerage = STATIC_SITE ? null : lazy(() => import('./pages/console/Brokerage'));
-const Content = STATIC_SITE ? null : lazy(() => import('./pages/console/Content'));
-const Users = STATIC_SITE ? null : lazy(() => import('./pages/console/Users'));
-const Audit = STATIC_SITE ? null : lazy(() => import('./pages/console/Audit'));
-const DataSync = STATIC_SITE ? null : lazy(() => import('./pages/console/DataSync'));
-const NfoAdmin = STATIC_SITE ? null : lazy(() => import('./pages/console/Nfos'));
-const ConsoleSettings = STATIC_SITE ? null : lazy(() => import('./pages/console/Settings'));
+const ConsoleLayout = STATIC_SITE ? null : lazyPage(() => import('./layouts/ConsoleLayout'));
+const Dashboard = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Dashboard'));
+const Clients = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Clients'));
+const ClientDetail = STATIC_SITE ? null : lazyPage(() => import('./pages/console/ClientDetail'));
+const Leads = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Leads'));
+const KycRequests = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Kyc'));
+const OrderDesk = STATIC_SITE ? null : lazyPage(() => import('./pages/console/OrderDesk'));
+const Tickets = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Tickets'));
+const Brokerage = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Brokerage'));
+const Content = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Content'));
+const Users = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Users'));
+const Audit = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Audit'));
+const DataSync = STATIC_SITE ? null : lazyPage(() => import('./pages/console/DataSync'));
+const NfoAdmin = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Nfos'));
+const ConsoleSettings = STATIC_SITE ? null : lazyPage(() => import('./pages/console/Settings'));
 
 const admin = (el) => <RequireRole roles={['ADMIN']}>{el}</RequireRole>;
 
+// main public pages, fetched in the background after the first page shows
+const PUBLIC_PAGES = [Home, About, Services, ServiceDetail, AmcPartners, FundExplorer, SchemeDetail, Calculators, Knowledge, Contact];
+
 export default function App() {
+  useEffect(() => preloadPages(PUBLIC_PAGES), []);
   return (
     <ToastProvider>
       <SiteProvider>
         <AuthProvider>
+          <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route element={<PublicLayout />}>
@@ -155,6 +162,7 @@ export default function App() {
               )}
             </Routes>
           </Suspense>
+          </ErrorBoundary>
         </AuthProvider>
       </SiteProvider>
     </ToastProvider>

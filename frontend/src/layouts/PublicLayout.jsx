@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import Button from '../components/Button';
 import Icon from '../components/Icon';
@@ -11,6 +11,8 @@ import { brand } from '../brand';
 import { PhoneLinks, firstPhone, telHref } from '../utils/phone';
 import { STATIC_SITE } from '../utils/siteMode';
 import StaticDataNote from '../static/StaticDataNote';
+import ErrorBoundary from '../components/ErrorBoundary';
+import { PageLoader } from '../components/Skeleton';
 
 const NAV = [
   { to: '/', label: 'Home', end: true },
@@ -119,7 +121,12 @@ export default function PublicLayout() {
         </div>
       </header>
       <main id="main" tabIndex={-1}>
-        <Outlet />
+        {/* header and footer stay on screen while a page loads; a failed page shows a reload prompt, not a blank screen */}
+        <ErrorBoundary key={loc.pathname}>
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <SiteFooter />
       <FloatingContact site={site} />

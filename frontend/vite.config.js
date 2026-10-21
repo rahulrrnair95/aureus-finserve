@@ -12,9 +12,11 @@ const STATIC_DATA_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)
  */
 function staticDataPlugin() {
   let outDir;
+  let cfgRoot;
   return {
     name: 'aureus-static-data',
     configResolved(cfg) {
+      cfgRoot = cfg.root;
       outDir = path.resolve(cfg.root, cfg.build.outDir);
     },
     buildStart() {
@@ -33,11 +35,16 @@ function staticDataPlugin() {
         fs.createReadStream(file).pipe(res);
       });
     },
-    async writeBundle() {
+    async writeBundle(_opts, bundle) {
       fs.cpSync(STATIC_DATA_DIR, path.join(outDir, 'static-api'), { recursive: true });
-      // per-page titles / descriptions / structured data, sitemap.xml and robots.txt (see scripts/seo.mjs)
+      // page source file (relative to the project) -> its chunk and the chunks it imports, for per-page preload hints
+      const chunks = {};
+      for (const c of Object.values(bundle)) {
+        if (c.type === 'chunk' && c.facadeModuleId) chunks[path.relative(cfgRoot, c.facadeModuleId).split(path.sep).join('/')] = { file: c.fileName, imports: c.imports };
+      }
+      // per-page titles / descriptions / structured data, preloads, sitemap.xml and robots.txt (see scripts/seo.mjs)
       const { writeSeo } = await import('./scripts/seo.mjs');
-      const r = writeSeo(outDir, STATIC_DATA_DIR);
+      const r = writeSeo(outDir, STATIC_DATA_DIR, chunks);
       this.info?.(`SEO: ${r.pages} pages, ${r.sitemap} sitemap URLs`);
     },
   };

@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import App from './App';
 import { applyTextSize, getTextSize } from './utils/useTitle';
+// bundled with the entry (not a separate request) so the static site can render one round trip sooner
+import { installStaticApi } from './static/staticApi';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
@@ -21,7 +23,7 @@ applyTextSize(getTextSize());
 async function start() {
   let DemoBanner = null;
   if (STATIC) {
-    (await import('./static/staticApi')).installStaticApi();
+    installStaticApi();
   }
   if (DEMO) {
     const mock = await import('./demo/mockApi');
