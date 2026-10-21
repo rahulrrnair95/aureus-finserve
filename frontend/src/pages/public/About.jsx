@@ -121,10 +121,12 @@ function Credentials() {
                 <dt>ARN</dt>
                 <dd className="num">{site.arn ? arnText(site.arn) : '—'}</dd>
               </div>
-              <div>
-                <dt>Valid till</dt>
-                <dd>{formatDate(site.arnValidTill)}</dd>
-              </div>
+              {site.arnValidTill && (
+                <div>
+                  <dt>Valid till</dt>
+                  <dd>{formatDate(site.arnValidTill)}</dd>
+                </div>
+              )}
               {site.stats?.years != null && (
                 <div>
                   <dt>Years in business</dt>

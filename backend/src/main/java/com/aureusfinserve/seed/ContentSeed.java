@@ -320,7 +320,7 @@ We distribute regular plans of mutual fund schemes of the AMCs we are empanelled
         page("disclaimer", "Disclaimer", """
 Mutual fund investments are subject to market risks, read all scheme related documents carefully. Past performance may or may not be sustained in future and is not a guarantee of future returns.
 
-Aureus Finserve is an AMFI-registered Mutual Fund Distributor (ARN-372611, valid till 31-03-2028). We are a distributor and not an investment adviser registered with SEBI. Information on this website is for general education and is not investment, tax or legal advice. Please consult your own advisers before making decisions.
+Aureus Finserve is an AMFI-registered Mutual Fund Distributor (ARN-372611). We are a distributor and not an investment adviser registered with SEBI. Information on this website is for general education and is not investment, tax or legal advice. Please consult your own advisers before making decisions.
 
 Scheme names, NAVs and returns are based on NAVs published by AMFI and are updated from AMFI's daily NAV file. Returns are point-to-point on NAV for Regular Plan - Growth (1 year absolute; 3, 5 and 10 years annualised) and do not account for taxes or exit loads. Past performance may or may not be sustained in future. Risk-o-meter levels, expense ratios (Regular plan TER), fund size, fund managers, benchmarks, exit loads and minimum amounts are taken from AMC disclosures published on AMFI (daily risk-o-meter and TER disclosures, Scheme Summary Documents; compiled by TigZig) and may change; the scheme information document and factsheet on the AMC's website are the authoritative source. Calculators are illustrative only, assume a constant rate of return, and actual returns may vary.
 """);
