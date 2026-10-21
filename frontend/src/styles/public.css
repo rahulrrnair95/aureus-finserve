@@ -360,7 +360,14 @@
 }
 @media (min-width: 640px) {
   .pub-mini {
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+}
+/* the calculator card needs ~600px for its two columns: stay stacked on tablets (iPad landscape) */
+@media (min-width: 960px) and (max-width: 1199px) {
+  .pub-split--calc {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 }
 .pub-mini__result {

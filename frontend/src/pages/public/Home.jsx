@@ -267,7 +267,7 @@ function HowBand({ items }) {
 function CalcBand() {
   return (
     <section className="section section--cream" aria-labelledby="calc-title">
-      <div className="container pub-split">
+      <div className="container pub-split pub-split--calc">
         <div>
           <SectionHeading eyebrow="Plan ahead" title={<span id="calc-title">See what a monthly habit can grow into</span>} lead="Move the sliders for an illustration of how a SIP might grow. Our goal, step-up, SWP, ELSS and retirement calculators help you plan further." />
           <Button variant="outline" to="/calculators">

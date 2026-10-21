@@ -270,9 +270,25 @@
   align-items: center;
   gap: 0.75rem;
 }
+.slider-field__top .field__label {
+  min-width: 0;
+}
+.slider-field__top > .row {
+  flex-shrink: 0;
+}
+/* fixed width so a long label cannot squeeze the value box (tablets, narrow cards) */
 .slider-field__top .input {
-  max-width: 150px;
+  flex: 0 0 auto;
+  width: 7rem;
+  padding-inline: 0.6rem;
   text-align: right;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.slider-field__top .input::-webkit-inner-spin-button,
+.slider-field__top .input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* ---------- OTP ---------- */
