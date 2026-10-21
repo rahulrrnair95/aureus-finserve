@@ -36,6 +36,8 @@ const AMCS = [
   { name: 'ITI Mutual Fund', slug: 'iti', website: 'https://www.itiamc.com' },
   { name: 'quant Mutual Fund', slug: 'quant', website: 'https://quantmutual.com' },
   { name: 'Carnelian Mutual Fund', slug: 'carnelian', website: 'https://www.carnelianmf.com' },
+  { name: 'WhiteOak Capital Mutual Fund', slug: 'whiteoak-capital', website: 'https://mf.whiteoakamc.com' },
+  { name: 'Franklin Templeton Mutual Fund', slug: 'franklin-templeton', website: 'https://www.franklintempletonindia.com' },
 ];
 
 // demo portfolio scheme names used by DemoSeed → [AMC, AMFI category pattern, optional name pattern]
