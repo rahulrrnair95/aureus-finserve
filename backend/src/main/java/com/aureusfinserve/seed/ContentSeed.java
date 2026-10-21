@@ -249,9 +249,9 @@ Exit loads may apply to units redeemed within the exit-load period. Returns are 
 
     private void testimonials() {
         String[][] t = {
-                {"Sunil K.", "Bengaluru", "The team explained every scheme document patiently and never rushed me. Having one dashboard for my whole family's investments has made reviews simple."},
-                {"Farida M.", "Pune", "I started my first SIP with Aureus. Their reminders and quick responses to my questions gave me the confidence to stay disciplined."},
-                {"Ravi & Lata S.", "Chennai", "After retirement we wanted a simple way to receive a monthly payout. Our relationship manager walked us through how an SWP works and the risks involved."},
+                {"Adarsh", "Trivandrum", "The team explained every scheme document patiently and never rushed me. Having one dashboard for my whole family's investments has made reviews simple."},
+                {"Sikha", "Mumbai", "I started my first SIP with Aureus. Their reminders and quick responses to my questions gave me the confidence to stay disciplined."},
+                {"Mohan & Mini", "Thrissur", "After retirement we wanted a simple way to receive a monthly payout. Our relationship manager walked us through how an SWP works and the risks involved."},
         };
         for (String[] x : t) {
             Testimonial tm = new Testimonial();

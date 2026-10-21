@@ -56,7 +56,8 @@ export const HOME_FALLBACK = {
 export const initials = (name) =>
   String(name || '')
     .split(/\s+/)
-    .filter(Boolean)
+    // "Mohan and Mini" -> "MM", not "MA"
+    .filter((w) => /^[\p{L}\p{N}]/u.test(w) && !/^and$/i.test(w))
     .slice(0, 2)
     .map((w) => w[0].toUpperCase())
     .join('');
