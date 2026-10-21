@@ -25,7 +25,7 @@ function Hero({ hero }) {
     <section className="pub-hero on-navy" aria-labelledby="hero-title">
       <div className="container pub-hero__grid">
         <div className="pub-hero__copy">
-          <span className="eyebrow">AMFI-registered mutual fund distributor · Thiruvananthapuram</span>
+          <span className="eyebrow">AMFI-registered mutual fund distributor</span>
           <h1 id="hero-title">{hero.headline || HOME_FALLBACK.hero.headline}</h1>
           <span className="gold-rule" aria-hidden="true" />
           <p className="lead">{hero.subline || HOME_FALLBACK.hero.subline}</p>
