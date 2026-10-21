@@ -216,8 +216,9 @@ Exit loads may apply to units redeemed within the exit-load period. Returns are 
                 "Taxation depends on the type of scheme and how long you hold your units. Our capital gains statement helps with reporting, but please consult a tax adviser for your specific situation.");
         faq(9, "Security", "How is my data protected?",
                 "Sensitive information such as PAN, mobile number and bank account numbers is encrypted at rest, logins are protected with OTP, and we process personal data in line with the Digital Personal Data Protection Act, 2023.");
-        faq(10, "Grievance", "How do I raise a complaint?",
-                "You can raise a service request from your dashboard or write to our grievance officer. We aim to respond within 21 days. If you are not satisfied, you may approach SEBI SCORES (https://scores.sebi.gov.in).");
+        // Grievance FAQ hidden for now - uncomment to show it again.
+        // faq(10, "Grievance", "How do I raise a complaint?",
+        //         "You can raise a service request from your dashboard or write to our grievance officer. We aim to respond within 21 days. If you are not satisfied, you may approach SEBI SCORES (https://scores.sebi.gov.in).");
     }
 
     private void term(String t, String d) {
@@ -280,7 +281,7 @@ Exit loads may apply to units redeemed within the exit-load period. Returns are 
 
     /** The firm's team. Years are shown on the site as "10+ years"; add the founder's EUIN in Content > Team. */
     private void team() {
-        member(1, "Rahul Rajesh", "Founder", null, true, 10, "NISM Series V-A certified; Graduate",
+        member(1, "Rahul Rajesh", "Founder", "E714199", true, 10, "NISM Series V-A certified; Graduate",
                 "Rahul founded Aureus Finserve to help families invest in mutual funds with clear explanations and dependable service. He is NISM Series V-A certified and has more than 10 years of experience.");
     }
 
@@ -308,7 +309,7 @@ Exit loads may apply to units redeemed within the exit-load period. Returns are 
 
     private void pages() {
         page("about", "About Aureus Finserve", """
-Aureus Finserve is an AMFI-registered Mutual Fund Distributor (ARN-000000) helping individuals and families invest in mutual funds with clarity and discipline.
+Aureus Finserve is an AMFI-registered Mutual Fund Distributor (ARN-372611) helping individuals and families invest in mutual funds with clarity and discipline.
 
 We are a distributor and not an investment adviser. We help you understand schemes, their risks and costs, complete KYC and execute transactions, and we support you with statements, service requests and periodic reviews.
 
@@ -319,7 +320,7 @@ We distribute regular plans of mutual fund schemes of the AMCs we are empanelled
         page("disclaimer", "Disclaimer", """
 Mutual fund investments are subject to market risks, read all scheme related documents carefully. Past performance may or may not be sustained in future and is not a guarantee of future returns.
 
-Aureus Finserve is an AMFI-registered Mutual Fund Distributor (ARN-000000, valid till 31-03-2028). We are a distributor and not an investment adviser registered with SEBI. Information on this website is for general education and is not investment, tax or legal advice. Please consult your own advisers before making decisions.
+Aureus Finserve is an AMFI-registered Mutual Fund Distributor (ARN-372611, valid till 31-03-2028). We are a distributor and not an investment adviser registered with SEBI. Information on this website is for general education and is not investment, tax or legal advice. Please consult your own advisers before making decisions.
 
 Scheme names, NAVs and returns are based on NAVs published by AMFI and are updated from AMFI's daily NAV file. Returns are point-to-point on NAV for Regular Plan - Growth (1 year absolute; 3, 5 and 10 years annualised) and do not account for taxes or exit loads. Past performance may or may not be sustained in future. Risk-o-meter levels, expense ratios (Regular plan TER), fund size, fund managers, benchmarks, exit loads and minimum amounts are taken from AMC disclosures published on AMFI (daily risk-o-meter and TER disclosures, Scheme Summary Documents; compiled by TigZig) and may change; the scheme information document and factsheet on the AMC's website are the authoritative source. Calculators are illustrative only, assume a constant rate of return, and actual returns may vary.
 """);
@@ -385,7 +386,7 @@ If your complaint is not resolved to your satisfaction, you may lodge it on SEBI
                 new Hero("Grow your wealth with the right mutual funds",
                         "An AMFI-registered mutual fund distributor helping families invest with clarity, discipline and personal service.",
                         "Book a free consultation", "Calculate your SIP"),
-                List.of(new TitleText("AMFI-registered", "We are an AMFI-registered mutual fund distributor (ARN-000000) and follow the AMFI code of conduct."),
+                List.of(new TitleText("AMFI-registered", "We are an AMFI-registered mutual fund distributor (ARN-372611) and follow the AMFI code of conduct."),
                         new TitleText("Dedicated relationship manager", "A named relationship manager who knows your family's goals and is a call or message away."),
                         new TitleText("One dashboard for all your funds", "Track holdings, SIPs, goals and capital gains for your whole family in one secure place."),
                         new TitleText("Paperless investing", "Complete KYC, start SIPs and place orders online with OTP authentication - no forms, no couriers.")),

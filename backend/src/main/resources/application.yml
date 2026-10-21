@@ -112,7 +112,7 @@ app:
   firm:
     name: Aureus Finserve
     tagline: Wealth Beyond Today
-    arn: ARN-000000
+    arn: ARN-372611
     arn-valid-till: 2028-03-31
     address: "Chitra Niketh, Ist Floor, Sree Chitra Nagar, Pangode, Thirumala P O, Thiruvananthapuram, Kerala 695006"
     phone: "+91 9020467232, +91 6282659654"
@@ -125,7 +125,7 @@ app:
       clients: 850
       years: 12
       sip-book-cr: 1.85
-    disclaimer: "Aureus Finserve is an AMFI-registered Mutual Fund Distributor (ARN-000000). We are a distributor and not an investment adviser; we do not provide investment advice. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Past performance is not indicative of future returns."
+    disclaimer: "Aureus Finserve is an AMFI-registered Mutual Fund Distributor (ARN-372611). We are a distributor and not an investment adviser; we do not provide investment advice. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Past performance is not indicative of future returns."
     nodal-officer:
       name: "Placeholder Nodal Officer"
       phone: "+91 80 0000 0001"

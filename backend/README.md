@@ -66,7 +66,7 @@ Generate keys with `openssl rand -base64 32`. **Never change `APP_CRYPTO_KEY` / 
 exists.** Data encrypted with the old key becomes unreadable, and lookups by PAN, mobile or e-mail stop matching.
 
 Other `app.*` settings live in `src/main/resources/application.yml`: session timeouts, lockout, OTP validity, mock-exchange delays,
-and `app.seed.enabled`. The firm details there (ARN `ARN-000000`, address, phone, e-mail, nodal officer, escalation matrix, stats)
+and `app.seed.enabled`. The firm details there (ARN `ARN-372611`, address, phone, e-mail, nodal officer, escalation matrix, stats)
 are **placeholders**. Replace them. Site stats, socials, phone, address and similar can also be edited at runtime via `PUT /api/admin/cms/site`.
 
 ## Automatic data updates
