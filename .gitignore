@@ -1,0 +1,21 @@
+# dependencies and build output
+node_modules/
+backend/target/
+frontend/dist/
+frontend/dist-demo/
+frontend/dist-static/
+frontend/static-data.tmp/
+artifact/
+
+# secrets and local config
+backend/config/secrets.yml
+*.env.local
+.env.*.local
+
+# tools and OS
+.firebase/
+.vscode/
+.idea/
+*.log
+Thumbs.db
+.DS_Store

@@ -1,0 +1,153 @@
+# Default profile: Microsoft SQL Server.
+# Run with `--spring.profiles.active=h2` for an in-memory database (no SQL Server needed).
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-request: true
+      force-response: false
+
+spring:
+  application:
+    name: aureus-backend
+  # Local secrets (database password, encryption keys, SMTP password) - kept out of the code.
+  # Path is relative to the folder the backend is started from (the backend folder).
+  config:
+    import: optional:file:./config/secrets.yml
+  datasource:
+    url: jdbc:sqlserver://${DB_HOST:localhost}:${DB_PORT:1433};databaseName=${DB_NAME:AureusFinserve};encrypt=true;trustServerCertificate=true
+    username: ${DB_USER:aureus_app}
+    password: ${DB_PASSWORD:ChangeMe@2026}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        use_nationalized_character_data: true
+        jdbc:
+          time_zone: Asia/Kolkata
+          batch_size: 200
+        order_inserts: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: always
+    time-zone: Asia/Kolkata
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
+
+logging:
+  level:
+    org.hibernate.SQL: warn
+    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: error
+
+app:
+  # true => OTPs are returned in API responses as "devOtp" and logged. Set APP_DEV_MODE=false once an SMS gateway is configured.
+  dev-mode: ${APP_DEV_MODE:true}
+  frontend-url: ${APP_FRONTEND_URL:http://localhost:5173}
+  crypto:
+    # Base64 of a 32-byte AES-256 key. The default is a well-known DEV key - ALWAYS override in production.
+    key: ${APP_CRYPTO_KEY:QXVyZXVzRmluc2VydmVEZXZLZXktRE8tTk9ULVVTRSE=}
+    # Base64 HMAC-SHA256 key used for lookup hashes (PAN / mobile / email).
+    hmac-key: ${APP_HMAC_KEY:QXVyZXVzRmluc2VydmVEZXZIbWFjS2V5LURPLU5PVC1VU0UtSU4tUFJPRA==}
+  amfi:
+    nav-url: ${APP_AMFI_NAV_URL:https://www.amfiindia.com/spages/NAVAll.txt}
+    scheme-master-url: ${APP_AMFI_SCHEME_MASTER_URL:https://portal.amfiindia.com/DownloadSchemeData_Po.aspx?mf=0}
+  # Automatic data updates (only while the backend is running). Cron = second minute hour day-of-month month day-of-week.
+  # Every run is listed under Console > Data sync (sync_run table, triggered by "Scheduler").
+  auto-sync:
+    # false => nothing runs on a schedule; the manual buttons / POST /api/admin/sync/* still work
+    enabled: ${APP_AUTO_SYNC_ENABLED:true}
+    zone: Asia/Kolkata
+    # daily NAV import from AMFI NAVAll.txt (AMFI publishes the day's NAVs by about 23:00 IST)
+    nav-cron: "0 30 23 * * *"
+    # NAV retry next morning - runs only if no NAV import succeeded in the last 20 hours
+    nav-retry-cron: "0 0 7 * * *"
+    # daily new / closed schemes of the active AMCs in the amc table (new ones get ~10 years of NAV history)
+    schemes-cron: "0 0 0 * * *"
+    # daily scheme details: risk-o-meter, Regular TER, AUM, fund managers, benchmark, exit load, objective, minimums
+    details-cron: "0 30 0 * * *"
+    # daily new fund offers (NFOs) of all AMCs from the AMFI scheme master + Scheme Summary Document details
+    nfo-cron: "0 0 8 * * *"
+    # on startup: every job (NAV, new schemes, details, NFOs) whose last successful run is older than 20 hours runs once
+    # in the background after the delay - so a day missed while the backend was off is caught up
+    catch-up-on-start: true
+    catch-up-delay-seconds: 60
+    nav-history-url: "https://api.mfapi.in/mf/{code}"
+    details-url: "https://api.tigzig.com/mf/v1/details?schemes={codes}"
+  mail:
+    # true => real e-mails over SMTP (spring.mail.* in config/secrets.yml); false => e-mails are only logged
+    enabled: ${APP_MAIL_ENABLED:false}
+    # new enquiries, portfolio reviews, call-back requests and KYC applications are e-mailed here (default: app.firm.email)
+    notify-to: ${APP_MAIL_NOTIFY_TO:}
+  security:
+    idle-timeout-investor-minutes: 15
+    idle-timeout-staff-minutes: 30
+    absolute-timeout-hours: 8
+    otp-validity-minutes: 5
+    otp-max-attempts: 3
+    lockout-threshold: 5
+    lockout-minutes: 30
+    captcha-threshold: 3
+    trusted-device-days: 30
+    activation-link-days: 7
+  rate-limit:
+    auth-per-ip-per-minute: ${APP_RATE_LIMIT_IP:20}
+    otp-per-user-per-15-min: ${APP_RATE_LIMIT_OTP:5}
+  mock-exchange:
+    enabled: true
+    payment-after-seconds: 20
+    allot-after-seconds: 40
+    poll-millis: 5000
+  # ---- Firm details: PLACEHOLDER VALUES - replace with the firm's real registration and contact details ----
+  firm:
+    name: Aureus Finserve
+    tagline: Wealth Beyond Today
+    arn: ARN-000000
+    arn-valid-till: 2028-03-31
+    address: "Chitra Niketh, Ist Floor, Sree Chitra Nagar, Pangode, Thirumala P O, Thiruvananthapuram, Kerala 695006"
+    phone: "+91 9020467232, +91 6282659654"
+    whatsapp: "+91 9020467232"
+    email: "rahulrrnair95@gmail.com"
+    office-hours: "Mon-Sat, 9:30 AM - 6:00 PM (closed on public holidays)"
+    map-embed-url: "https://www.google.com/maps?q=Chitra+Niketh,+Sree+Chitra+Nagar,+Pangode,+Thirumala,+Thiruvananthapuram,+Kerala+695006&output=embed"
+    stats:
+      aum-cr: 125.4
+      clients: 850
+      years: 12
+      sip-book-cr: 1.85
+    disclaimer: "Aureus Finserve is an AMFI-registered Mutual Fund Distributor (ARN-000000). We are a distributor and not an investment adviser; we do not provide investment advice. Mutual fund investments are subject to market risks, read all scheme related documents carefully. Past performance is not indicative of future returns."
+    nodal-officer:
+      name: "Placeholder Nodal Officer"
+      phone: "+91 80 0000 0001"
+      email: "grievance@aureusfinserve.in"
+    escalation:
+      - level: 1
+        name: "Client Service Desk"
+        designation: "Customer Service"
+        phone: "+91 80 0000 0000"
+        email: "care@aureusfinserve.in"
+        response-days: 7
+      - level: 2
+        name: "Placeholder Nodal Officer"
+        designation: "Grievance Nodal Officer"
+        phone: "+91 80 0000 0001"
+        email: "grievance@aureusfinserve.in"
+        response-days: 14
+      - level: 3
+        name: "Placeholder Principal Officer"
+        designation: "Principal Officer / Founder"
+        phone: "+91 80 0000 0002"
+        email: "principal@aureusfinserve.in"
+        response-days: 21
+    scores-url: "https://scores.sebi.gov.in"
+    odr-url: "https://smartodr.in"

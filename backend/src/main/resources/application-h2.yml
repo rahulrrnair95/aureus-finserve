@@ -1,0 +1,18 @@
+# In-memory H2 database in SQL Server compatibility mode - for local development and tests.
+spring:
+  datasource:
+    url: jdbc:h2:mem:aureus;MODE=MSSQLServer;DATABASE_TO_UPPER=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        # overrides the SQL Server dialect configured in application.yml
+        dialect: org.hibernate.dialect.H2Dialect
+
+app:
+  dev-mode: true
+  # no scheduled downloads for local testing / CI (manual triggers still work)
+  auto-sync:
+    enabled: false

@@ -1,0 +1,130 @@
+.demo-panel {
+  position: fixed;
+  left: calc(12px + env(safe-area-inset-left, 0px));
+  bottom: calc(84px + env(safe-area-inset-bottom, 0px)); /* clears the mobile tab bar */
+  z-index: 1000;
+  max-width: min(320px, calc(100vw - 96px));
+  background: var(--navy-deep, #071829);
+  color: #f3efe7;
+  border: 1px solid rgba(212, 175, 108, 0.6);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(7, 24, 41, 0.35);
+  font-family: var(--font-body, 'Montserrat', system-ui, sans-serif);
+  font-size: 0.8rem;
+}
+.demo-panel__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  background: none;
+  border: 0;
+  color: #e8cf97;
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+.demo-panel__toggle span:last-child {
+  margin-left: auto;
+  font-size: 1rem;
+}
+.demo-panel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d4af6c;
+}
+.demo-panel__body {
+  padding: 0 0.8rem 0.8rem;
+}
+.demo-panel__body p {
+  margin: 0 0 0.6rem;
+  line-height: 1.45;
+}
+.demo-panel__label {
+  color: #e8cf97;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.demo-panel ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+.demo-panel ul button {
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  background: rgba(212, 175, 108, 0.12);
+  border: 1px solid rgba(212, 175, 108, 0.35);
+  border-radius: 6px;
+  color: #fbfaf7;
+  font: inherit;
+  cursor: pointer;
+}
+.demo-panel ul button:hover,
+.demo-panel ul button:focus-visible {
+  background: rgba(212, 175, 108, 0.25);
+  outline: 2px solid #d4af6c;
+  outline-offset: 1px;
+}
+@media (min-width: 768px) {
+  .demo-panel {
+    left: auto;
+    right: calc(16px + env(safe-area-inset-right, 0px));
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+}
+.demo-panel__tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(212, 175, 108, 0.35);
+}
+.demo-panel__tabs button {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: #f3efe7;
+  font: inherit;
+  font-size: 0.72rem;
+  padding: 0.35rem 0.4rem;
+  cursor: pointer;
+}
+.demo-panel__tabs button[aria-selected='true'] {
+  color: #e8cf97;
+  border-bottom-color: #d4af6c;
+}
+.demo-panel__accounts button {
+  display: grid;
+  gap: 0.1rem;
+}
+.demo-panel__who {
+  font-weight: 600;
+}
+.demo-panel__cred {
+  font-variant-numeric: tabular-nums;
+  color: #e8cf97;
+  font-size: 0.74rem;
+  word-break: break-all;
+  user-select: all;
+}
+.demo-panel__try {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.35rem;
+  line-height: 1.4;
+}
+.demo-panel__hint {
+  margin: 0.6rem 0 0 !important;
+  color: rgba(243, 239, 231, 0.75);
+  font-size: 0.72rem;
+}

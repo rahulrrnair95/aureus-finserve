@@ -1,0 +1,36 @@
+# Caddy web server for aureusfinserve.com: free automatic HTTPS (Let's Encrypt), serves the React site and
+# forwards /api to the Java backend on this server. Installed to /etc/caddy/Caddyfile by server-setup.sh.
+
+www.aureusfinserve.com {
+	redir https://aureusfinserve.com{uri} permanent
+}
+
+aureusfinserve.com {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# Java backend (Spring Boot on localhost:8080)
+	handle /api/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+
+	# React site; unknown paths fall back to index.html (client-side routing)
+	handle {
+		root * /opt/aureus/frontend
+		try_files {path} /index.html
+		file_server
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+	}
+
+	log {
+		output file /var/log/caddy/aureusfinserve.log
+	}
+}
