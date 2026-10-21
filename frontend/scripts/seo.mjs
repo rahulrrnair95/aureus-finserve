@@ -4,6 +4,7 @@
 // Called from vite.config.js after the static bundle is written; reads the snapshot in static-data/.
 import fs from 'fs';
 import path from 'path';
+import { LOCAL_FAQS, seoTitle } from '../src/seoContent.js';
 
 const ORIGIN = 'https://aureusfinserve.com';
 const SITE = 'Aureus Finserve';
@@ -16,7 +17,6 @@ const clip = (s, n = 160) => {
   return t.length <= n ? t : `${t.slice(0, n - 1).replace(/\s+\S*$/, '')}…`;
 };
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
-const fullTitle = (t) => (t ? `${t} | ${SITE}` : `${SITE} | Mutual Fund Distributor in Thiruvananthapuram`);
 
 function readJson(dir, file, fallback) {
   try {
@@ -80,10 +80,15 @@ function pages(dir) {
     {
       path: '/',
       title: null,
+      heading: readJson(dir, 'home.json', {}).hero?.headline || 'Grow your wealth with the right mutual funds',
       description: `${SITE} is an AMFI-registered mutual fund distributor${arn} in ${CITY}. Start a SIP, invest a lump sum, save tax with ELSS and plan retirement with personal service.`,
+      html:
+        `<h2>Mutual fund and SIP investment in Trivandrum</h2><p>${SITE} is an AMFI-registered mutual fund distributor${esc(arn)} based at Pangode, Thirumala in Thiruvananthapuram, helping families across Trivandrum, Kerala and NRIs abroad start a SIP, invest a lump sum, save tax with ELSS funds and plan for retirement and children’s education.</p>` +
+        faqHtml(LOCAL_FAQS),
       ld: [
         biz,
         { '@context': 'https://schema.org', '@type': 'WebSite', '@id': `${ORIGIN}/#website`, name: SITE, alternateName: 'Aureus Finserve Mutual Funds', url: `${ORIGIN}/` },
+        faqLd(LOCAL_FAQS),
       ],
     },
     { path: '/about', title: 'About us', description: `Meet ${SITE}${founder ? `, founded by ${founder}` : ''}: an AMFI-registered mutual fund distributor${arn} in ${CITY} helping families invest with clarity and discipline.` },
@@ -92,7 +97,7 @@ function pages(dir) {
     { path: '/funds', title: 'Fund explorer', description: 'Explore mutual fund schemes with latest NAVs, 1/3/5/10-year returns, risk-o-meter and expense ratios from AMFI data. Filter by AMC, category and risk.' },
     { path: '/nfo', title: 'New fund offers', description: 'Mutual fund NFOs that are open now or opening soon, with dates, minimum investment, risk-o-meter and scheme details.' },
     { path: '/calculators', title: 'Mutual fund calculators', description: 'Free SIP, lump sum, step-up SIP, goal, retirement, SWP, ELSS tax and cost-of-delay calculators. Illustrations only.' },
-    { path: '/learn', title: 'Knowledge centre', description: 'Learn about mutual funds: articles on SIPs, ELSS, debt funds and the risk-o-meter, plus FAQs and a glossary of mutual fund terms.' },
+    { path: '/learn', title: 'Knowledge centre', description: 'Learn about mutual funds: articles on SIPs, ELSS, debt funds and the risk-o-meter, plus FAQs and a glossary of mutual fund terms.', html: faqHtml(readJson(dir, 'faqs.json', [])) },
     { path: '/contact', title: 'Contact us', description: `Contact ${SITE} in ${CITY}. ${site.phone ? `Call ${site.phone}` : 'Call us'}${site.officeHours ? `, ${site.officeHours}` : ''}.`, ld: [biz] },
   ];
 
@@ -110,7 +115,18 @@ function pages(dir) {
 
   for (const f of safeList(path.join(dir, 'services'))) {
     const s = readJson(path.join(dir, 'services'), f, null);
-    if (s?.slug) list.push({ path: `/services/${s.slug}`, title: s.title, description: clip(`${s.shortText || ''} ${s.whatItIs || ''}`) });
+    if (!s?.slug) continue;
+    list.push({
+      path: `/services/${s.slug}`,
+      title: s.title,
+      description: clip(`${s.shortText || ''} ${s.whatItIs || ''}`),
+      html:
+        (s.whatItIs ? `<h2>What it is</h2><p>${esc(s.whatItIs)}</p>` : '') +
+        (s.whoItSuits ? `<h2>Who it suits</h2><p>${esc(s.whoItSuits)}</p>` : '') +
+        (s.howItWorks?.length ? `<h2>How it works</h2><ol>${s.howItWorks.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : '') +
+        faqHtml(s.faqs || []),
+      ld: s.faqs?.length ? [faqLd(s.faqs)] : undefined,
+    });
   }
 
   for (const a of readJson(dir, 'articles.json', [])) {
@@ -121,6 +137,7 @@ function pages(dir) {
       description: clip(a.summary),
       type: 'article',
       lastmod: a.publishedAt?.slice(0, 10),
+      html: markdownHtml(readJson(path.join(dir, 'articles'), `${a.slug}.json`, {}).body),
       ld: [{ '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: clip(a.summary), datePublished: a.publishedAt, author: { '@type': 'Organization', name: SITE }, publisher: { '@id': `${ORIGIN}/#business` }, image: OG_IMAGE, mainEntityOfPage: `${ORIGIN}/learn/articles/${a.slug}` }],
     });
   }
@@ -153,6 +170,65 @@ function pages(dir) {
   return list;
 }
 
+function faqLd(faqs) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })),
+  };
+}
+
+function faqHtml(faqs) {
+  if (!faqs.length) return '';
+  return `<h2>Frequently asked questions</h2>${faqs.map((f) => `<h3>${esc(f.question)}</h3><p>${esc(f.answer)}</p>`).join('')}`;
+}
+
+/** Just enough of the article markdown (## headings, - lists, paragraphs) for crawlers. */
+function markdownHtml(md) {
+  const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '$1');
+  return String(md || '')
+    .split(/\n{2,}/)
+    .map((block) => {
+      const b = block.trim();
+      if (!b) return '';
+      const h = /^(#{2,4})\s+(.*)$/.exec(b);
+      if (h) return `<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`;
+      const lines = b.split('\n');
+      if (lines.every((l) => /^\s*([-*]|\d+\.)\s+/.test(l))) return `<ul>${lines.map((l) => `<li>${inline(l.replace(/^\s*([-*]|\d+\.)\s+/, ''))}</li>`).join('')}</ul>`;
+      return `<p>${inline(b.replace(/\n/g, ' '))}</p>`;
+    })
+    .join('');
+}
+
+const SECTIONS = { services: 'Services', calculators: 'Calculators', funds: 'Fund explorer', nfo: 'New fund offers', learn: 'Knowledge centre' };
+
+function breadcrumbLd(p, name) {
+  const parts = p.path.split('/').filter(Boolean);
+  if (!parts.length) return null;
+  const items = [{ name: 'Home', url: `${ORIGIN}/` }];
+  if (parts.length > 1 && SECTIONS[parts[0]]) items.push({ name: SECTIONS[parts[0]], url: `${ORIGIN}/${parts[0]}` });
+  items.push({ name, url: `${ORIGIN}${p.path}` });
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url })),
+  };
+}
+
+// Plain links to the main pages in the pre-rendered text (React replaces it all once the app starts).
+const NAV = [
+  ['/', 'Home'],
+  ['/services/sip', 'Start a SIP'],
+  ['/services/tax-saving-elss', 'ELSS tax saving'],
+  ['/services/retirement', 'Retirement planning'],
+  ['/services/nri', 'NRI investments'],
+  ['/funds', 'Fund explorer'],
+  ['/calculators/sip', 'SIP calculator'],
+  ['/learn', 'Learn'],
+  ['/about', 'About us'],
+  ['/contact', 'Contact us'],
+];
+
 function safeList(dir) {
   try {
     return fs.readdirSync(dir).filter((f) => f.endsWith('.json'));
@@ -163,8 +239,14 @@ function safeList(dir) {
 
 function render(template, p) {
   const url = p.path === '/' ? `${ORIGIN}/` : `${ORIGIN}${p.path}`;
-  const title = fullTitle(p.title);
+  const title = seoTitle(p.path, p.title);
   const desc = clip(p.description);
+  const heading = p.heading || p.title || SITE;
+  const crumbs = breadcrumbLd(p, p.title || SITE);
+  // readable text for crawlers and for the moment before the scripts load
+  const body =
+    `<div class="seo-pre"><nav aria-label="Site">${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join(' · ')}</nav>` +
+    `<h1>${esc(heading)}</h1><p>${esc(p.description)}</p>${p.html || ''}</div>`;
   const head = [
     `<link rel="canonical" href="${url}" />`,
     `<meta property="og:site_name" content="${SITE}" />`,
@@ -177,12 +259,14 @@ function render(template, p) {
     `<meta property="og:image:height" content="630" />`,
     `<meta property="og:locale" content="en_IN" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
-    ...(p.ld || []).map(ld),
+    ...[...(p.ld || []), crumbs].filter(Boolean).map(ld),
+    '<style>.seo-pre{max-width:60rem;margin:0 auto;padding:1.5rem 1rem;font-family:Montserrat,system-ui,sans-serif;color:#0b2137;line-height:1.6}.seo-pre nav{font-size:.875rem}</style>',
   ].join('\n    ');
   return template
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${esc(desc)}" />`)
-    .replace('</head>', `    ${head}\n  </head>`);
+    .replace('</head>', `    ${head}\n  </head>`)
+    .replace('<div id="root"></div>', `<div id="root">${body}</div>`);
 }
 
 export function writeSeo(outDir, dataDir) {

@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
+import { seoTitle } from '../seoContent';
 
 export function useTitle(title) {
   useEffect(() => {
-    // keep in step with scripts/seo.mjs (fullTitle), which writes the same titles into the static HTML
-    document.title = title ? `${title} | Aureus Finserve` : 'Aureus Finserve | Mutual Fund Distributor in Thiruvananthapuram';
+    // same titles as the static HTML written by scripts/seo.mjs
+    document.title = seoTitle(window.location.pathname, title);
   }, [title]);
 }
 
