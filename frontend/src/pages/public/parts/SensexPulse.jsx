@@ -2,7 +2,7 @@ import { useId, useMemo, useRef, useState } from 'react';
 import Button from '../../../components/Button';
 import { SectionHeading } from '../../../components/Misc';
 import { formatLakhCrore, formatNumber } from '../../../utils/format';
-import { labelIndices, monotonePath, nearestIndex, niceTicks, prefersReducedMotion, useInView, useTween, useWidth } from '../../../utils/motion';
+import { labelIndices, monotonePath, nearestIndex, niceTicks, useInView, useTween, useWidth } from '../../../utils/motion';
 import { formatAsOf, sensexSeries, useSensexLatest } from './sensexData';
 
 const RANGES = [
@@ -12,8 +12,7 @@ const RANGES = [
   { key: 'ALL', label: 'All', years: Infinity },
 ];
 
-const PAD = { top: 24, right: 22, bottom: 30, left: 4 };
-const DEPTH = { x: 9, y: -9 }; // extrusion of the 3D ribbon (towards the back, up and right)
+const PAD = { top: 24, right: 16, bottom: 30, left: 4 };
 const axisLabel = (v) => (v >= 1000 ? `${formatNumber(v / 1000)}K` : formatNumber(v));
 
 /** Range summary: total change, CAGR, what ₹1 lakh became and the steepest calendar-year fall (complete years only). */
@@ -53,12 +52,6 @@ function SensexChart({ data, rangeKey, inView, worst, hover, setHover }) {
   const base = h - PAD.bottom;
   const area = `${line}L${pts[pts.length - 1][0]},${base}L${pts[0][0]},${base}Z`;
   const last = pts[pts.length - 1];
-  // 3D: the same line pushed back by DEPTH; the strip between the two is the ribbon's lit top face
-  const back = pts.map(([px, py]) => [px + DEPTH.x, py + DEPTH.y]);
-  const ribbon = `${line}L${monotonePath([...back].reverse()).slice(1)}Z`;
-  const bl = back[back.length - 1];
-  const side = `M${last[0]},${last[1]}L${bl[0]},${bl[1]}L${bl[0]},${base + DEPTH.y}L${last[0]},${base}Z`;
-  const floor = `M${pts[0][0]},${base}L${back[0][0]},${base + DEPTH.y}L${bl[0]},${base + DEPTH.y}L${last[0]},${base}Z`;
   const hp = hover !== null ? pts[hover] : null;
   const showWorst = worst && w >= 480;
 
@@ -84,18 +77,6 @@ function SensexChart({ data, rangeKey, inView, worst, hover, setHover }) {
               <stop offset="0%" stopColor="#8a6a2f" />
               <stop offset="100%" stopColor="#c99a45" />
             </linearGradient>
-            <linearGradient id={`${gid}-top`} x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#e8cf97" />
-              <stop offset="100%" stopColor="#f3dcaa" />
-            </linearGradient>
-            <linearGradient id={`${gid}-side`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#c9a45a" stopOpacity="0.45" />
-              <stop offset="100%" stopColor="#c9a45a" stopOpacity="0.04" />
-            </linearGradient>
-            <radialGradient id={`${gid}-shadow`}>
-              <stop offset="0%" stopColor="#0b2137" stopOpacity="0.28" />
-              <stop offset="100%" stopColor="#0b2137" stopOpacity="0" />
-            </radialGradient>
           </defs>
           <g className="pub-pulse__gridlines">
             {ticks.map((t) => (
@@ -118,10 +99,7 @@ function SensexChart({ data, rangeKey, inView, worst, hover, setHover }) {
           </g>
           {/* key replays the draw-in animation whenever the range changes */}
           <g key={rangeKey}>
-            <path className="pub-pulse__area" d={floor} fill="#d4af6c" fillOpacity="0.1" />
-            <path className="pub-pulse__area" d={side} fill={`url(#${gid}-side)`} />
             <path className="pub-pulse__area" d={area} fill={`url(#${gid}-fill)`} />
-            <path className="pub-pulse__ribbon" d={ribbon} fill={`url(#${gid}-top)`} />
             <path className="pub-pulse__line" d={line} pathLength="1" stroke={`url(#${gid}-line)`} />
             {showWorst && (
               <g className="pub-pulse__note">
@@ -132,8 +110,6 @@ function SensexChart({ data, rangeKey, inView, worst, hover, setHover }) {
               </g>
             )}
             <g className="pub-pulse__end">
-              <ellipse cx={last[0] + DEPTH.x / 2} cy={base + DEPTH.y / 2} rx="16" ry="4" fill={`url(#${gid}-shadow)`} />
-              <line x1={last[0]} x2={last[0]} y1={last[1] + 6} y2={base} className="pub-pulse__stem" />
               <circle className="pub-pulse__ping" cx={last[0]} cy={last[1]} r="6" />
               <circle cx={last[0]} cy={last[1]} r="5" />
             </g>
@@ -156,7 +132,6 @@ export default function SensexPulse() {
   const inView = useInView(sectionRef, 0.15);
   const [rangeKey, setRangeKey] = useState('ALL');
   const [hover, setHover] = useState(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const latest = useSensexLatest();
   const series = useMemo(() => sensexSeries(latest), [latest]);
   const range = RANGES.find((r) => r.key === rangeKey);
@@ -209,16 +184,7 @@ export default function SensexPulse() {
           </div>
         </div>
 
-        <div
-          className="pub-pulse__card"
-          style={{ '--tx': `${tilt.x}deg`, '--ty': `${tilt.y}deg` }}
-          onPointerMove={(e) => {
-            if (e.pointerType !== 'mouse' || prefersReducedMotion()) return;
-            const r = e.currentTarget.getBoundingClientRect();
-            setTilt({ x: ((e.clientY - r.top) / r.height - 0.5) * -5, y: ((e.clientX - r.left) / r.width - 0.5) * 7 });
-          }}
-          onPointerLeave={() => setTilt({ x: 0, y: 0 })}
-        >
+        <div className="pub-pulse__card">
           <div className="pub-pulse__head">
             <div>
               <span className="pub-pulse__index">
