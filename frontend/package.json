@@ -10,7 +10,9 @@
     "build:demo": "vite build --mode demo && node scripts/make-artifact.mjs",
     "static:data": "node scripts/build-static-data.mjs",
     "build:static": "vite build --mode static",
-    "preview:static": "vite preview --mode static"
+    "preview:static": "vite preview --mode static",
+    "market:sensex": "node scripts/update-sensex.mjs",
+    "prebuild:static": "node scripts/update-sensex.mjs"
   },
   "dependencies": {
     "jspdf": "4.1.0",

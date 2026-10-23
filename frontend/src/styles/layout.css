@@ -11,8 +11,7 @@
   height: auto;
 }
 .lockup__text {
-  display: flex;
-  flex-direction: column;
+  display: inline-grid;
   line-height: 1;
 }
 .lockup__name {
@@ -28,6 +27,68 @@
   font-weight: 500;
   letter-spacing: 0.62em;
   margin-top: 0.35rem;
+}
+/* stacked lock-up (with tagline), centred like the full logo. In the public header it shrinks once the page is
+   scrolled (.site-header--compact): the rule and tagline fold away and the mark gets smaller. */
+.lockup--stacked {
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.6rem 0;
+  transition: padding 0.3s var(--ease);
+}
+.lockup--stacked .lockup__mark {
+  width: auto;
+  height: 34px;
+  transition: height 0.3s var(--ease);
+}
+.lockup--stacked .lockup__text {
+  align-items: center;
+  justify-items: center;
+}
+.lockup--stacked .lockup__name {
+  font-size: 1.2rem;
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;
+}
+.lockup--stacked .lockup__sub {
+  margin-top: 0.3rem;
+  font-size: 0.5rem;
+  letter-spacing: 0.5em;
+  margin-right: -0.5em;
+}
+.lockup__rule {
+  width: 18px;
+  height: 1px;
+  margin: 0.4rem 0;
+  background: var(--gold);
+}
+.lockup__tagline {
+  font-family: var(--font-body);
+  font-size: 0.44rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+.lockup__rule,
+.lockup__tagline {
+  max-height: 1rem;
+  overflow: hidden;
+  transition: max-height 0.3s var(--ease), opacity 0.25s ease, margin 0.3s var(--ease);
+}
+.site-header--compact .lockup--stacked {
+  padding: 0.45rem 0;
+}
+.site-header--compact .lockup--stacked .lockup__mark {
+  height: 22px;
+}
+.site-header--compact .lockup__rule,
+.site-header--compact .lockup__tagline {
+  max-height: 0;
+  margin: 0;
+  opacity: 0;
 }
 .lockup--gold .lockup__name,
 .lockup--gold .lockup__sub {
@@ -555,7 +616,7 @@
   }
 }
 @media (max-width: 400px) {
-  .site-header .lockup__text {
+  .site-header .lockup:not(.lockup--stacked) .lockup__text {
     display: none;
   }
 }

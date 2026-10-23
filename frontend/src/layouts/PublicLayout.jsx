@@ -43,6 +43,14 @@ export default function PublicLayout() {
     setOpen(false);
     if (!loc.hash) window.scrollTo(0, 0);
   }, [loc.pathname, loc.hash]);
+  // header shrinks (smaller logo, no tagline) once the page is scrolled
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const startTo = STATIC_SITE ? '/contact' : user ? (user.role === 'INVESTOR' ? '/app/transact' : homeForRole(user.role)) : '/contact';
 
@@ -51,10 +59,10 @@ export default function PublicLayout() {
       <a href="#main" className="skip-link">
         Skip to main content
       </a>
-      <header className="site-header on-navy">
+      <header className={`site-header on-navy${compact ? ' site-header--compact' : ''}`}>
         <div className="container">
           <div className="site-header__bar">
-            <Lockup tone="gold" />
+            <Lockup tone="gold" tagline={site.tagline || 'Wealth Beyond Today'} />
             <nav className="site-nav" aria-label="Main">
               <ul>
                 {NAV.map((n) => (

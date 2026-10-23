@@ -46,6 +46,44 @@ after you publish again.
 4. Back in Firebase, click **Verify**. DNS can take from a few minutes up to 24 hours. Firebase then issues the HTTPS
    certificate on its own.
 
+## Daily Sensex update (Cloud Functions)
+
+The Sensex card on the home page shows the latest closing value. Two Cloud Functions in `functions/` provide it:
+
+- `sensexDaily` runs every weekday at 17:00 IST (after the 15:30 close) and saves the close to Firestore (`market/sensex`).
+- `sensex` serves that value at `https://<site>/market/sensex` (rewrite in `firebase.json`). The CDN caches it for up
+  to 30 minutes, so visitors almost never start the function.
+
+The site does not need to be published again for the value to change. If the function is unavailable, the page uses the
+copy baked into the last build (`frontend/public/market/sensex.json`, refreshed by `npm run build:static`), and failing
+that the built-in year-end values. It is always an end-of-day value, never a live price.
+
+### One-time setup
+
+1. Firebase console → ⚙ **Usage and billing** → **Details & settings** → **Modify plan** → **Blaze** (pay as you go).
+   Cloud Functions need it. This use stays within the free allowance (a few hundred function calls and one scheduler job a
+   month); setting a small budget alert there, for example ₹100, is a good idea.
+2. Firebase console → **Build → Firestore Database** → **Create database** → location **asia-south1 (Mumbai)**,
+   **production mode**.
+3. In `firebase.json`, add the rewrite for the function as the first entry of `hosting.rewrites` (it is left out until
+   the function exists, because Hosting refuses a rewrite to a missing function):
+   `{ "source": "/market/sensex", "function": { "functionId": "sensex", "region": "asia-south1" } },`
+4. Deploy the functions and Firestore rules, then the site:
+
+```powershell
+cd "D:\Aureus Finserve\functions"
+npm install
+cd "D:\Aureus Finserve"
+npx firebase-tools@13 deploy --only functions,firestore:rules
+npx firebase-tools@13 deploy --only hosting
+```
+
+Deploy the functions first: Hosting refuses a rewrite to a function that does not exist yet. The first visit to
+`/market/sensex` after deploying fetches the close straight away, so you do not have to wait for 17:00.
+
+To check on it: Firebase console → **Functions** → `sensexDaily` → **Logs** ("Sensex updated" or "Sensex unchanged" on
+market holidays). Google Cloud console → **Cloud Scheduler** can run the job immediately with **Force run**.
+
 ## Notes
 
 - Hosting settings are in `firebase.json`. Every URL falls back to `index.html`, so deep links such as `/funds/123`

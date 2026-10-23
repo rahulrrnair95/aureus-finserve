@@ -13,8 +13,9 @@ import { HOME_FALLBACK, HOME_SERVICE_SLUGS, SERVICE_META, initials, serviceIcon 
 import { AmcStrip } from './parts/Amc';
 import ArticleCard from './parts/ArticleCard';
 import MiniSip from './parts/MiniSip';
+import SensexPulse from './parts/SensexPulse';
 import { NFO_DISCLAIMER, NfoCard } from './parts/Nfo';
-import { brand } from '../../brand';
+import HeroDevices from './parts/HeroDevices';
 import { STATIC_SITE } from '../../utils/siteMode';
 
 const isNum = (v) => v !== null && v !== undefined && v !== '' && !Number.isNaN(Number(v));
@@ -46,10 +47,8 @@ function Hero({ hero }) {
             investment advice.
           </p>
         </div>
-        <div className="pub-hero__brand" aria-hidden="true">
-          <div className="pub-hero__frame">
-            <img src={brand.fullGold} alt="" width="580" height="515" />
-          </div>
+        <div className="pub-hero__scene">
+          <HeroDevices />
         </div>
       </div>
     </section>
@@ -267,10 +266,10 @@ function HowBand({ items }) {
 function CalcBand() {
   return (
     <section className="section section--cream" aria-labelledby="calc-title">
-      <div className="container pub-split pub-split--calc">
-        <div>
+      <div className="container">
+        <div className="row row--between" style={{ alignItems: 'flex-end' }}>
           <SectionHeading eyebrow="Plan ahead" title={<span id="calc-title">See what a monthly habit can grow into</span>} lead="Move the sliders for an illustration of how a SIP might grow. Our goal, step-up, SWP, ELSS and retirement calculators help you plan further." />
-          <Button variant="outline" to="/calculators">
+          <Button variant="outline" to="/calculators" style={{ marginBottom: '2rem' }}>
             More calculators
           </Button>
         </div>
@@ -434,6 +433,7 @@ export default function Home() {
     <>
       <Hero hero={home.hero || HOME_FALLBACK.hero} />
       <Banners />
+      <SensexPulse />
       {/* Trust numbers band (AUM, clients, families, years, SIPs, SIP book) hidden for now.
           To show it again, uncomment the next line; the figures come from app.firm.stats / Site settings.
       {sec.trust && <Trust />} */}

@@ -1,0 +1,10 @@
+rules_version = '2';
+// Firestore is only used by the Cloud Functions (admin access, not affected by these rules).
+// Browsers get no direct access; the website reads the Sensex through the /market/sensex function.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,4 +1,12 @@
 {
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20",
+    "ignore": ["node_modules", ".git", "*.log"]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "hosting": {
     "public": "frontend/dist-static",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],

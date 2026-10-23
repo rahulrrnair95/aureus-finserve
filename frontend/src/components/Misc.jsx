@@ -4,14 +4,27 @@ import Icon from './Icon';
 import Button from './Button';
 import { brand } from '../brand';
 
-/** Brand lockup: monogram image + "AUREUS" serif + "FINSERVE" spaced sans. tone: 'gold' (navy bg) | 'navy' (light bg) */
-export function Lockup({ tone = 'gold', to = '/', compact = false }) {
+/**
+ * Brand lockup: monogram image + "AUREUS" serif + "FINSERVE" spaced sans. tone: 'gold' (navy bg) | 'navy' (light bg)
+ * With a tagline it is stacked and centred like the full logo: mark, AUREUS, FINSERVE, a short rule, the tagline.
+ */
+export function Lockup({ tone = 'gold', to = '/', compact = false, tagline }) {
   return (
-    <Link to={to} className={`lockup lockup--${tone} ${compact ? 'lockup--compact' : ''}`} aria-label="Aureus Finserve — home">
+    <Link
+      to={to}
+      className={`lockup lockup--${tone} ${compact ? 'lockup--compact' : ''} ${tagline ? 'lockup--stacked' : ''}`}
+      aria-label="Aureus Finserve — home"
+    >
       <img src={brand.mark[tone] || brand.markGold} alt="" className="lockup__mark" width="52" height="42" />
       <span className="lockup__text" aria-hidden="true">
         <span className="lockup__name">AUREUS</span>
         <span className="lockup__sub">FINSERVE</span>
+        {tagline && (
+          <>
+            <span className="lockup__rule" />
+            <span className="lockup__tagline">{tagline}</span>
+          </>
+        )}
       </span>
     </Link>
   );

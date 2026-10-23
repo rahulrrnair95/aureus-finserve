@@ -3,6 +3,7 @@ import { SliderField } from '../../../components/Field';
 import Button from '../../../components/Button';
 import { sipCalc } from '../../../utils/calc';
 import { CALC_DISCLAIMER } from '../../../utils/pdf';
+import SipGrowthChart from './SipGrowthChart';
 import { formatINR, formatLakhCrore } from '../../../utils/format';
 
 const clamp = (v, min, max, def) => (v === '' || Number.isNaN(Number(v)) ? def : Math.min(max, Math.max(min, Number(v))));
@@ -21,41 +22,40 @@ export default function MiniSip() {
 
   return (
     <div className="pub-mini card">
-      <form className="pub-mini__inputs stack-lg" onSubmit={(e) => e.preventDefault()} aria-label="SIP calculator inputs">
+      <form className="pub-mini__inputs" onSubmit={(e) => e.preventDefault()} aria-label="SIP calculator inputs">
         <SliderField label="Monthly SIP" value={monthly} onChange={setMonthly} min={500} max={1000000} step={500} prefix="₹" format={(v) => formatLakhCrore(v)} />
         <SliderField label="Expected return (p.a.)" value={rate} onChange={setRate} min={1} max={30} step={0.5} suffix="%" format={(v) => `${v}%`} />
         <SliderField label="Investment period" value={years} onChange={setYears} min={1} max={40} suffix="years" format={(v) => `${v} yrs`} />
       </form>
       <div className="pub-mini__result">
-        <div className="stat">
-          <span className="stat__label">Amount invested</span>
-          <span className="stat__value">{formatINR(res.invested, { decimals: 0 })}</span>
-        </div>
-        <div className="stat">
-          <span className="stat__label">Estimated value</span>
-          <span className="stat__value pub-mini__value">{formatINR(res.value, { decimals: 0 })}</span>
-          <span className="stat__sub">
-            {formatLakhCrore(res.value)} after {y} years
-          </span>
-        </div>
+        <dl className="pub-mini__stats">
+          <div>
+            <dt>
+              <span className="pub-dot pub-dot--navy" aria-hidden="true" /> Invested
+            </dt>
+            <dd>{formatINR(res.invested, { decimals: 0 })}</dd>
+          </div>
+          <div>
+            <dt>
+              <span className="pub-dot pub-dot--gold" aria-hidden="true" /> Estimated gains
+            </dt>
+            <dd className="pub-mini__gain">+{formatINR(res.gain, { decimals: 0 })}</dd>
+          </div>
+          <div className="pub-mini__total">
+            <dt>Value after {y} years</dt>
+            <dd>{formatINR(res.value, { decimals: 0 })}</dd>
+          </div>
+        </dl>
         <div className="pub-mini__bar" aria-hidden="true">
           <span style={{ width: `${investedPct}%` }} />
         </div>
-        <div className="row tiny muted">
-          <span className="pub-dot pub-dot--navy" aria-hidden="true" /> Invested
-          <span className="pub-dot pub-dot--gold" aria-hidden="true" /> Estimated gains
-        </div>
-        <div className="row">
-          <Button variant="outline" to={`/calculators/sip?${qs}`}>
-            Open full calculator
-          </Button>
-          <Button variant="link" to="/calculators">
-            More calculators
-          </Button>
-        </div>
-        <p className="tiny muted" style={{ margin: 0 }}>
-          {CALC_DISCLAIMER}
-        </p>
+        <SipGrowthChart series={res.series} />
+      </div>
+      <div className="pub-mini__actions">
+        <Button variant="outline" to={`/calculators/sip?${qs}`}>
+          Open full calculator
+        </Button>
+        <p className="tiny muted">{CALC_DISCLAIMER}</p>
       </div>
     </div>
   );

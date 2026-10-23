@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Website content seed: articles, FAQs, glossary, testimonials, team, banner, compliance pages,
+ * Website content seed: articles, FAQs, glossary, testimonials, team, compliance pages,
  * home / about / site settings, 8 service pages and the AMC partner list.
  * All firm-specific facts (names, ARN, numbers, addresses) are PLACEHOLDERS to be replaced by the firm.
  */
@@ -27,7 +27,6 @@ public class ContentSeed {
     private final GlossaryTermRepository glossaryRepo;
     private final TestimonialRepository testimonialRepo;
     private final TeamMemberRepository teamRepo;
-    private final BannerRepository bannerRepo;
     private final CmsPageRepository pageRepo;
     private final AmcRepository amcRepo;
     private final CmsContentService content;
@@ -39,7 +38,6 @@ public class ContentSeed {
         glossary();
         testimonials();
         team();
-        banner();
         pages();
         home();
         about();
@@ -246,7 +244,7 @@ Exit loads may apply to units redeemed within the exit-load period. Returns are 
         term("Benchmark", "An index against which a scheme's performance is compared, such as the NIFTY 50 TRI.");
     }
 
-    // ================================================================ testimonials, team, banner
+    // ================================================================ testimonials, team
 
     private void testimonials() {
         String[][] t = {
@@ -283,17 +281,6 @@ Exit loads may apply to units redeemed within the exit-load period. Returns are 
     private void team() {
         member(1, "Rahul Rajesh", "Founder", "E714199", true, 10, "NISM Series V-A certified; Graduate",
                 "Rahul founded Aureus Finserve to help individuals and families invest in mutual funds with clear explanations and dependable service. He is NISM Series V-A certified and has more than 10 years of experience.");
-    }
-
-    private void banner() {
-        Banner b = new Banner();
-        b.setTitle("Start your SIP journey");
-        b.setText("Book a free consultation with our relationship managers to understand SIPs and the schemes available. Mutual fund investments are subject to market risks.");
-        b.setCtaLabel("Book a consultation");
-        b.setCtaUrl("/contact");
-        b.setActive(true);
-        b.setStartsAt(Fmt.now().minusDays(30));
-        bannerRepo.save(b);
     }
 
     // ================================================================ CMS pages

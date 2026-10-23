@@ -1,0 +1,13 @@
+{
+  "index": "BSE SENSEX",
+  "asOf": "2026-10-23",
+  "close": 73123.83,
+  "prevClose": 73249.39,
+  "changePct": -0.17,
+  "yearEnd": {
+    "2024": 78139.01,
+    "2025": 85220.6
+  },
+  "source": "Yahoo Finance (^BSESN), end of day",
+  "updatedAt": "2026-10-23T20:09:08.851Z"
+}
