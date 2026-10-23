@@ -67,7 +67,7 @@ that the built-in year-end values. It is always an end-of-day value, never a liv
    **production mode**.
 3. In `firebase.json`, add the rewrite for the function as the first entry of `hosting.rewrites` (it is left out until
    the function exists, because Hosting refuses a rewrite to a missing function):
-   `{ "source": "/market/sensex", "function": { "functionId": "sensex", "region": "asia-south1" } },`
+   `{ "source": "/market/@(sensex|navs)", "function": { "functionId": "market", "region": "asia-south1" } },`
 4. Deploy the functions and Firestore rules, then the site:
 
 ```powershell

@@ -2,6 +2,7 @@
 // browser from the JSON snapshot in /static-api/ (written by scripts/build-static-data.mjs). Filtering, sorting and
 // paging mirror the backend (SchemeService.search, NfoService.publicList, SiteService.articles); NFO status is
 // recomputed from the dates for today in India (NfoRules), so an NFO is never shown as open after it has closed.
+// Scheme NAVs and returns are updated from the nightly /market/navs data when it is newer than the snapshot.
 // Every other /api/ call (POST, auth, investor, admin...) gets a 503 STATIC_SITE error.
 import { STATIC_UNAVAILABLE } from '../utils/siteMode';
 
@@ -35,6 +36,52 @@ function load(rel) {
     cache.set(rel, p);
   }
   return cache.get(rel);
+}
+
+// ---------------------------------------------------------------- daily NAVs (Firebase function, see functions/navs.js)
+
+let navsPromise = null;
+/**
+ * Latest NAVs and returns from /market/navs ({ asOf, navs: { code: [nav, date, r1, r3, r5, r10] } }), updated every night
+ * from AMFI; null when unavailable (the snapshot is then used as it is).
+ */
+export function loadNavOverlay() {
+  navsPromise ??= fetch('/market/navs', { headers: { Accept: 'application/json' } })
+    .then((r) => (r.ok && (r.headers.get('content-type') || '').includes('json') ? r.json() : null))
+    .then((j) => (j && j.navs && typeof j.navs === 'object' ? j : null))
+    .catch(() => null);
+  return navsPromise;
+}
+
+const RETURN_KEYS = ['return1y', 'return3y', 'return5y', 'return10y'];
+/** The scheme with the newer NAV, date and returns when the overlay is newer than the snapshot. */
+function withNav(s, overlay) {
+  const r = overlay?.navs?.[s.code];
+  if (!r || !(r[1] > (s.navDate || ''))) return s;
+  const out = { ...s, nav: r[0], navDate: r[1] };
+  // a missing figure (e.g. a failed lookup) keeps the snapshot's value
+  RETURN_KEYS.forEach((k, i) => (out[k] = r[2 + i] ?? s[k]));
+  return out;
+}
+
+let schemesPromise = null;
+/** schemes.json with the daily NAVs applied. */
+function loadSchemes() {
+  if (!schemesPromise) {
+    schemesPromise = Promise.all([load('schemes.json'), loadNavOverlay()]).then(([all, o]) => (o ? all.map((s) => withNav(s, o)) : all));
+    schemesPromise.catch(() => (schemesPromise = null));
+  }
+  return schemesPromise;
+}
+
+/** A scheme's detail with the daily NAV applied and added to its NAV history. */
+async function schemeDetail(id) {
+  const [d, o] = await Promise.all([load(`schemes/${id}.json`), loadNavOverlay()]);
+  const s = withNav(d, o);
+  if (s === d) return d;
+  const hist = Array.isArray(d.navHistory) ? d.navHistory : [];
+  const last = hist[hist.length - 1];
+  return { ...s, navHistory: last && last.date >= s.navDate ? hist : [...hist, { date: s.navDate, nav: s.nav }] };
 }
 
 // ---------------------------------------------------------------- helpers mirroring Java
@@ -101,7 +148,7 @@ async function schemes(params) {
   const subCategory = params.get('subCategory');
   const amc = params.get('amc');
   const risk = params.get('risk');
-  const all = await load('schemes.json');
+  const all = await loadSchemes();
   const list = all
     .filter((s) => !needle || (s.name || '').toLowerCase().includes(needle) || (s.amc || '').toLowerCase().includes(needle) || (s.subCategory != null && s.subCategory.toLowerCase().includes(needle)))
     .filter((s) => blank(category) || eqIc(s.category, category))
@@ -225,11 +272,11 @@ const SIMPLE = {
 };
 
 /** Detail endpoints: only answered for ids / slugs present in the matching list (so unknown ones are a clean 404). */
-async function detail(listFile, match, file, what) {
+async function detail(listFile, match, file, what, read = load) {
   const list = await load(listFile);
   if (!list.some(match)) return notFound(what);
   try {
-    return json(await load(file));
+    return json(await read(file));
   } catch (e) {
     if (e instanceof Missing) return notFound(what);
     throw e;
@@ -246,7 +293,7 @@ async function handleGet(path, params) {
     return json(blank(c) ? list : list.filter((a) => eqIc(c, a.category)));
   }
   let m;
-  if ((m = path.match(/^\/public\/schemes\/(\d+)$/))) return detail('schemes.json', (s) => String(s.id) === m[1], `schemes/${m[1]}.json`, 'Scheme');
+  if ((m = path.match(/^\/public\/schemes\/(\d+)$/))) return detail('schemes.json', (s) => String(s.id) === m[1], m[1], 'Scheme', schemeDetail);
   if ((m = path.match(/^\/public\/nfos\/(\d+)(\/one-pager)?$/))) return nfoDetail(m[1], !!m[2]);
   if ((m = path.match(/^\/public\/articles\/([^/]+)$/))) {
     const slug = decodeURIComponent(m[1]);
